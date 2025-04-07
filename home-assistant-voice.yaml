@@ -1377,6 +1377,7 @@ i2s_audio:
 
 microphone:
   - platform: nabu_microphone
+    id: voice_package_mic # <<< Your minimal change
     i2s_din_pin: GPIO15
     adc_type: external
     pdm: false

@@ -1388,9 +1388,23 @@ microphone:
     channel_0:
       id: asr_mic
       amplify_shift: 0
+        on_chunk:
+        - lambda: |-
+            // Only process audio chunks when the UDP stream switch is ON and socket is valid
+            if (id(udp_stream_switch).state && id(sock_fd) >= 0) {
+              // Send audio chunk to UDP server
+              const auto buf = x.data(); // x is the std::vector<int16_t> chunk
+              const auto len = x.size() * sizeof(int16_t);
+
+              // ESP_LOGD("udp_stream", "Sending %d bytes (%zu samples) to UDP server", len, x.size());
+              int result = ::send(id(sock_fd), buf, len, 0);
+              // Handle potential send errors if needed
+              // if (result < 0) { ESP_LOGE("udp_stream", "Error sending UDP data: %s", strerror(errno)); }
+            }
     channel_1:
       id: comm_mic
       amplify_shift: 2
+
 
 speaker:
   # Hardware speaker output
